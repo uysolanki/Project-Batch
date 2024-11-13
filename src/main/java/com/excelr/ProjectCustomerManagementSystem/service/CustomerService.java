@@ -26,5 +26,14 @@ public class CustomerService {
 		return customerRepository.findById(cno).get();
 		
 	}
+	public void updateCustomer(int cno, Customer customer) {
+		Customer customerDb=customerRepository.findById(cno).get();
+		customerDb.setEmail(customer.getEmail());
+		customerDb.setFirstname(customer.getFirstname());
+		customerDb.setLastname(customer.getLastname());
+		customerDb.setMobileno(customer.getMobileno());
+		customerRepository.save(customerDb);
+		
+	}
 
 }
