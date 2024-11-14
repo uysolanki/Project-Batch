@@ -55,9 +55,11 @@ public class CustomerController {
 	}
 	//Read a records
 	@RequestMapping("/getAllCustomers")
-	public List<Customer> getAllCustomers()
+	public String getAllCustomers(Model model)
 	{
-			return customerService.getAllCustomers();
+		List<Customer> customers=customerService.getAllCustomers();
+		model.addAttribute("customers",customers);
+		return "show-customer-list";
 	}
 	
 	@RequestMapping("/newCustomer")
@@ -72,24 +74,30 @@ public class CustomerController {
 	public String saveCustomer(@ModelAttribute Customer customer)
 	{
 		customerService.saveCustomer(customer);
-		return "Customer-Record-Added";
+		return "redirect:/getAllCustomers";
 	}
 	
 	//Delete a record
-	@DeleteMapping("/deleteCustomer/{custId}")
-	public String deleteCustomer(@PathVariable("custId") int cno)
+	@RequestMapping("/deleteCustomer/{id}")
+	public String deleteCustomer(@PathVariable("id") int cno)
 	{
 		customerService.deleteCustomer(cno);
-		return "Customer Deleted";
+		return "redirect:/getAllCustomers";
+	}
+	
+	@RequestMapping("/updatecustomerform/{id}")
+	public String updatecustomerform(@PathVariable("id") int cno, Model model)
+	{
+		Customer customer=customerService.getCustomer(cno);
+		model.addAttribute("customer",customer);
+		return "update-customer-form";
 	}
 	
 	//Update a record
-	@PutMapping("/updateCustomer/{custId}")
-	public String updateCustomer(@PathVariable("custId") int cno,@RequestBody Customer customer)
+	@PostMapping("/updatecustomer/{id}")
+	public String updateCustomer(@PathVariable("id") int cno,@ModelAttribute Customer customer)
 	{
 		customerService.updateCustomer(cno,customer);
-		return "Customer Updated";
+		return "redirect:/getAllCustomers";
 	}
-	
-	
 }
