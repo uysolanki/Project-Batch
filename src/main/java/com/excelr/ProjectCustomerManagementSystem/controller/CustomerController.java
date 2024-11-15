@@ -1,17 +1,16 @@
 package com.excelr.ProjectCustomerManagementSystem.controller;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.excelr.ProjectCustomerManagementSystem.entity.Customer;
 import com.excelr.ProjectCustomerManagementSystem.service.CustomerService;
@@ -54,7 +53,8 @@ public class CustomerController {
 		return customerService.getCustomer(cno);
 	}
 	//Read a records
-	@RequestMapping("/getAllCustomers")
+	//@RequestMapping("/getAllCustomers")
+	@RequestMapping(value={"/getAllCustomers","/homepage","/project"})
 	public String getAllCustomers(Model model)
 	{
 		List<Customer> customers=customerService.getAllCustomers();
@@ -62,6 +62,7 @@ public class CustomerController {
 		return "show-customer-list";
 	}
 	
+	//new customer form
 	@RequestMapping("/newCustomer")
 	public String addCustomer(Model model)
 	{
@@ -69,7 +70,8 @@ public class CustomerController {
 		model.addAttribute("customer",customer);
 		return "add-customer-form";
 	}
-	//Create/add a record
+	
+	//save details about customer
 	@PostMapping("/saveCustomer")
 	public String saveCustomer(@ModelAttribute Customer customer)
 	{
@@ -77,7 +79,7 @@ public class CustomerController {
 		return "redirect:/getAllCustomers";
 	}
 	
-	//Delete a record
+	//Delete a customer
 	@RequestMapping("/deleteCustomer/{id}")
 	public String deleteCustomer(@PathVariable("id") int cno)
 	{
@@ -85,6 +87,7 @@ public class CustomerController {
 		return "redirect:/getAllCustomers";
 	}
 	
+	//update customer form
 	@RequestMapping("/updatecustomerform/{id}")
 	public String updatecustomerform(@PathVariable("id") int cno, Model model)
 	{
@@ -93,11 +96,29 @@ public class CustomerController {
 		return "update-customer-form";
 	}
 	
-	//Update a record
+	//Update a customer
 	@PostMapping("/updatecustomer/{id}")
 	public String updateCustomer(@PathVariable("id") int cno,@ModelAttribute Customer customer)
 	{
 		customerService.updateCustomer(cno,customer);
 		return "redirect:/getAllCustomers";
+	}
+	
+	@RequestMapping("/403")
+	public ModelAndView accesssDenied(Principal user) {
+
+		ModelAndView model = new ModelAndView();
+
+		if (user != null) {
+			model.addObject("msg", "Hi " + user.getName() 
+			+ ", you do not have permission to access this page!");
+		} else {
+			model.addObject("msg", 
+			    "you do not have permission to access this page!");
+		}
+
+		model.setViewName("403");
+		return model;
+
 	}
 }
